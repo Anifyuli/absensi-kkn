@@ -111,7 +111,7 @@ function runMigrations(): void {
       ('202211010', 'Fadhil Musyaffa', 'Informatika', 'Reguler'),
       ('202311005', 'Irma Fatimatuz Zahro', 'Informatika', 'Reguler'),
       ('202211017', 'Moh. Anif Yuliansyah', 'Informatika', 'Karyawan'),
-      ('202311008', 'Muhammad Adil Imamul Mubarak', 'Informatika', 'Reguler'),
+      ('202311008', 'Muhammad Adil Imamul Haq Mubarak', 'Informatika', 'Reguler'),
       ('202111008', 'Muhammad Anam Mustaghfirin', 'Informatika', 'Karyawan'),
       ('202311012', 'Muhammad Ziyan Firdaus', 'Informatika', 'Karyawan'),
       ('202311015', 'Novelia Agatha Sutanto', 'Informatika', 'Reguler'),
