@@ -91,7 +91,7 @@ function runMigrations(): void {
   // Seed mahasiswa data from data_absensi.sql
   db.run(`INSERT OR IGNORE INTO mahasiswa (nim, nama, prodi, kelas) VALUES
     ('2024001001', 'Ahmad Iwan Junaidi', 'Teknik Elektro', 'Karyawan'),
-    ('202211008', 'Ahmad Nur Hidayatullah', 'Informatika', 'Reguler'),
+    ('202211004', 'Ahmad Nur Hidayatullah', 'Informatika', 'Reguler'),
     ('202211005', 'Ahmad Syauqi Hulaimi', 'Informatika', 'Karyawan'),
     ('202211010', 'Fadhil Musyaffa', 'Informatika', 'Reguler'),
     ('202311005', 'Irma Fatimatuz Zahro', 'Informatika', 'Reguler'),
