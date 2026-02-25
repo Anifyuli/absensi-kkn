@@ -1,6 +1,6 @@
 // src/pages/AdminPage.tsx
 
-import { useState, useEffect } from "preact/hooks";
+import { useState } from "preact/hooks";
 import {
   getAbsensiByTanggal,
   getDailySummary,
@@ -29,14 +29,6 @@ export function AdminPage() {
   const summary = getDailySummary(filterDate);
   const allMahasiswa = getAllMahasiswa();
   const allRecords = getAllAbsensi();
-
-  // If no records for today, use the most recent date with data
-  useEffect(() => {
-    if (records.length === 0 && allRecords.length > 0) {
-      const latestDate = allRecords[0].tanggal;
-      setFilterDate(latestDate);
-    }
-  }, [records.length, allRecords]);
 
   function exportCSV() {
     const data = getAllAbsensi();
