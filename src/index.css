@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    * {
+        @apply box-border;
+    }
+
+    ::-webkit-scrollbar {
+        @apply w-1.5;
+    }
+    ::-webkit-scrollbar-track {
+        @apply bg-ink-950;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply bg-slate-500 rounded-full;
+    }
+
+    ::selection {
+        @apply bg-amber-400/20 text-amber-300;
+    }
+}
+
+@layer components {
+    .card {
+        @apply bg-ink-800 border border-ink-700 rounded-xl;
+    }
+
+    .card-glow {
+        @apply card border-amber-400/30 shadow-[0_0_30px_-5px_rgba(245,166,35,0.15)];
+    }
+
+    .input-base {
+        @apply w-full bg-ink-900 border border-ink-700 rounded-lg px-4 py-3
+      text-white placeholder-slate-500 font-body text-sm
+      focus:outline-none focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30
+      transition-colors duration-150;
+    }
+
+    /* Datepicker calendar icon visibility */
+    input[type="date"] {
+        color-scheme: dark;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        position: absolute;
+        right: 0;
+        width: 40px;
+        height: 100%;
+        cursor: pointer;
+        opacity: 0;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2
+      bg-amber-400 hover:bg-amber-300 active:bg-amber-400
+      text-ink-950 font-display font-bold tracking-wider
+      px-6 py-3 rounded-lg text-sm uppercase
+      transition-all duration-150 hover:-translate-y-0.5
+      hover:shadow-[0_4px_20px_-4px_rgba(245,166,35,0.5)]
+      disabled:opacity-40 disabled:cursor-not-allowed
+      disabled:transform-none disabled:shadow-none;
+    }
+
+    .btn-blue {
+        @apply inline-flex items-center justify-center gap-2
+      bg-sky-400 hover:bg-sky-300 active:bg-sky-400
+      text-ink-950 font-display font-bold tracking-wider
+      px-6 py-3 rounded-lg text-sm uppercase
+      transition-all duration-150 hover:-translate-y-0.5
+      hover:shadow-[0_4px_20px_-4px_rgba(125,211,252,0.5)]
+      disabled:opacity-40 disabled:cursor-not-allowed
+      disabled:transform-none disabled:shadow-none;
+    }
+
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-2
+      bg-transparent hover:bg-ink-700 border border-ink-600 hover:border-slate-500
+      text-slate-400 hover:text-white
+      px-4 py-2.5 rounded-lg text-sm font-body font-medium
+      transition-all duration-150
+      disabled:opacity-40 disabled:cursor-not-allowed;
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-2
+      bg-transparent hover:bg-rose-400/10 border border-rose-400/40 hover:border-rose-400
+      text-rose-400 hover:text-rose-300
+      px-4 py-2.5 rounded-lg text-sm font-body font-medium
+      transition-all duration-150;
+    }
+
+    .tab-pill {
+        @apply px-4 py-2 rounded-lg text-sm font-body font-medium transition-all duration-150
+      text-slate-400 hover:text-white hover:bg-ink-700;
+    }
+
+    .tab-pill.active {
+        @apply bg-amber-400/10 text-amber-400 border border-amber-400/20;
+    }
+
+    .badge {
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full
+      font-mono text-[11px] font-medium uppercase tracking-wider;
+    }
+
+    .badge-hadir {
+        @apply badge bg-emerald-400/10 text-emerald-400 border border-emerald-400/20;
+    }
+
+    .badge-izin {
+        @apply badge bg-sky-400/10 text-sky-400 border border-sky-400/20;
+    }
+
+    .badge-shift-1 {
+        @apply badge bg-violet-400/10 text-violet-400 border border-violet-400/20;
+    }
+
+    .badge-shift-2 {
+        @apply badge bg-amber-400/10 text-amber-300 border border-amber-400/20;
+    }
+
+    .badge-shift-3 {
+        @apply badge bg-sky-400/10 text-sky-400 border border-sky-400/20;
+    }
+
+    .label {
+        @apply font-mono text-[10px] uppercase tracking-widest text-slate-500;
+    }
+
+    .section-title {
+        @apply font-display font-bold text-xl tracking-wide text-white;
+    }
+
+    .divider {
+        @apply border-t border-ink-700;
+    }
+}
+
+@layer utilities {
+    .glow-amber {
+        box-shadow: 0 0 30px -5px rgba(245, 166, 35, 0.25);
+    }
+
+    .glow-emerald {
+        box-shadow: 0 0 20px -5px rgba(52, 211, 153, 0.2);
+    }
+
+    .text-shadow-amber {
+        text-shadow: 0 0 30px rgba(245, 166, 35, 0.4);
+    }
+
+    .grid-scan {
+        background-image:
+            linear-gradient(rgba(245, 166, 35, 0.03) 1px, transparent 1px),
+            linear-gradient(
+                90deg,
+                rgba(245, 166, 35, 0.03) 1px,
+                transparent 1px
+            );
+        background-size: 40px 40px;
+    }
+
+    .noise {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+
+    .animate-delay-100 {
+        animation-delay: 100ms;
+    }
+
+    .animate-delay-200 {
+        animation-delay: 200ms;
+    }
+
+    .animate-delay-300 {
+        animation-delay: 300ms;
+    }
+
+    .animate-delay-400 {
+        animation-delay: 400ms;
+    }
+}
