@@ -197,27 +197,12 @@ function AbsensiSection({
   return (
     <div class="space-y-3">
       <div class="flex items-center gap-3 flex-wrap">
-        <div class="relative flex items-center">
-          <input
-            type="date"
-            value={filterDate}
-            onChange={(e) => onDateChange((e.target as HTMLInputElement).value)}
-            class="input-base max-w-[200px] pr-10"
-          />
-          <svg
-            class="pointer-events-none absolute right-3 h-4 w-4 text-slate-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
-        </div>
+        <input
+          type="date"
+          value={filterDate}
+          onChange={(e) => onDateChange((e.target as HTMLInputElement).value)}
+          class="input-base max-w-[200px]"
+        />
         <button onClick={onExport} class="btn-ghost text-xs">
           ⬇ CSV Hari Ini
         </button>
