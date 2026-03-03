@@ -1,18 +1,19 @@
 // src/pages/AdminPage.tsx
 
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import {
   getAbsensiByTanggal,
   getDailySummary,
   getAllAbsensi,
   getLocalDate,
 } from "@/db/absensi";
-import { getAllMahasiswa, countMahasiswa } from "@/db/mahasiswa";
+import { getAllMahasiswa } from "@/db/mahasiswa";
 import {
   verifyAdminPassword,
   getAdminList,
   addAdmin,
   removeAdmin,
+  refreshAdminList,
 } from "@/lib/auth";
 import { StatusBadge } from "@/components/ShiftCard";
 import { SHIFT_CONFIGS } from "@/lib/shifts";
@@ -25,48 +26,67 @@ export function AdminPage() {
     "absensi" | "mahasiswa" | "pengaturan"
   >("absensi");
 
-  const records = getAbsensiByTanggal(filterDate);
-  const summary = getDailySummary(filterDate);
-  const allMahasiswa = getAllMahasiswa();
-  const allRecords = getAllAbsensi();
+  const [records, setRecords] = useState<any[]>([]);
+  const [summary, setSummary] = useState<any>(null);
+  const [allMahasiswa, setAllMahasiswa] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  function exportCSV() {
-    const data = getAllAbsensi();
-    if (!data.length) {
-      addToast("Tidak ada data untuk diekspor.", "warning");
-      return;
+  // Fetch data on mount and when date changes
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      getAbsensiByTanggal(filterDate).then(setRecords).catch(console.error),
+      getDailySummary(filterDate).then(setSummary).catch(console.error),
+      getAllMahasiswa().then(setAllMahasiswa).catch(console.error),
+    ]).finally(() => setLoading(false));
+  }, [filterDate]);
+
+  // Refresh admin list on mount
+  useEffect(() => {
+    refreshAdminList();
+  }, []);
+
+  async function exportCSV() {
+    try {
+      const data = await getAllAbsensi();
+      if (!data.length) {
+        addToast("Tidak ada data untuk diekspor.", "warning");
+        return;
+      }
+
+      const header =
+        "Tanggal,Nama,NIM,Prodi,Kelas,Shift,Jam Absen,Waktu Absen,Status";
+      const rows = data.map((r) =>
+        [
+          r.tanggal,
+          r.nama,
+          r.nim,
+          r.prodi,
+          r.kelas,
+          r.nama_shift,
+          r.jam_absen,
+          r.waktu_absen ?? "-",
+          r.status,
+        ]
+          .map((v) => `"${v}"`)
+          .join(","),
+      );
+      const csv = [header, ...rows].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = Object.assign(document.createElement("a"), {
+        href: url,
+        download: `absensi_semua.csv`,
+      });
+      a.click();
+      URL.revokeObjectURL(url);
+      addToast("Data berhasil diekspor!", "success");
+    } catch (err) {
+      addToast("Gagal mengekspor data", "error");
     }
-
-    const header =
-      "Tanggal,Nama,NIM,Prodi,Kelas,Shift,Jam Absen,Waktu Absen,Status";
-    const rows = data.map((r) =>
-      [
-        r.tanggal,
-        r.nama,
-        r.nim,
-        r.prodi,
-        r.kelas,
-        r.nama_shift,
-        r.jam_absen,
-        r.waktu_absen ?? "-",
-        r.status,
-      ]
-        .map((v) => `"${v}"`)
-        .join(","),
-    );
-    const csv = [header, ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = Object.assign(document.createElement("a"), {
-      href: url,
-      download: `absensi_semua.csv`,
-    });
-    a.click();
-    URL.revokeObjectURL(url);
-    addToast("Data berhasil diekspor!", "success");
   }
 
-  function exportDayCSV() {
+  async function exportDayCSV() {
     if (!records.length) {
       addToast("Tidak ada data untuk tanggal ini.", "warning");
       return;
@@ -116,21 +136,31 @@ export function AdminPage() {
       </div>
 
       {/* ── Stat Cards ── */}
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <StatCard
-          label="Total Mahasiswa"
-          value={summary.total_mahasiswa}
-          color="amber"
-        />
-        <StatCard label="Hadir" value={summary.hadir} color="emerald" />
-        <StatCard label="Izin" value={summary.izin} color="sky" />
-      </div>
+      {loading || !summary ? (
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <StatCard label="Total Mahasiswa" value="-" color="amber" />
+          <StatCard label="Hadir" value="-" color="emerald" />
+          <StatCard label="Izin" value="-" color="sky" />
+        </div>
+      ) : (
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <StatCard
+            label="Total Mahasiswa"
+            value={summary.total_mahasiswa}
+            color="amber"
+          />
+          <StatCard label="Hadir" value={summary.hadir} color="emerald" />
+          <StatCard label="Izin" value={summary.izin} color="sky" />
+        </div>
+      )}
 
       {/* ── Per Shift Stats ── */}
-      {summary.per_shift.length > 0 && (
+      {summary?.per_shift?.length > 0 && (
         <div class="grid grid-cols-3 gap-3">
           {SHIFT_CONFIGS.map((cfg) => {
-            const data = summary.per_shift.find((p) => p.shift_id === cfg.id);
+            const data = summary.per_shift.find(
+              (p: any) => p.shift_id === cfg.id,
+            );
             return (
               <div key={cfg.id} class="card p-3 text-center">
                 <div class="text-xl mb-1">{cfg.icon}</div>
@@ -165,18 +195,26 @@ export function AdminPage() {
         ))}
       </div>
 
-      {activeSection === "absensi" && (
-        <AbsensiSection
-          records={records}
-          filterDate={filterDate}
-          onDateChange={setFilterDate}
-          onExport={exportDayCSV}
-        />
+      {loading ? (
+        <div class="card p-12 text-center">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          {activeSection === "absensi" && (
+            <AbsensiSection
+              records={records}
+              filterDate={filterDate}
+              onDateChange={setFilterDate}
+              onExport={exportDayCSV}
+            />
+          )}
+          {activeSection === "mahasiswa" && (
+            <MahasiswaSection mahasiswa={allMahasiswa} />
+          )}
+          {activeSection === "pengaturan" && <PengaturanSection />}
+        </>
       )}
-      {activeSection === "mahasiswa" && (
-        <MahasiswaSection mahasiswa={allMahasiswa} />
-      )}
-      {activeSection === "pengaturan" && <PengaturanSection />}
     </div>
   );
 }
@@ -189,7 +227,7 @@ function AbsensiSection({
   onDateChange,
   onExport,
 }: {
-  records: ReturnType<typeof getAbsensiByTanggal>;
+  records: any[];
   filterDate: string;
   onDateChange: (d: string) => void;
   onExport: () => void;
@@ -267,11 +305,7 @@ function AbsensiSection({
 
 // ── Mahasiswa Section ────────────────────────────────────────────────────────
 
-function MahasiswaSection({
-  mahasiswa,
-}: {
-  mahasiswa: ReturnType<typeof getAllMahasiswa>;
-}) {
+function MahasiswaSection({ mahasiswa }: { mahasiswa: any[] }) {
   return (
     <div class="card overflow-hidden">
       <div class="px-4 py-3 border-b border-ink-700 bg-ink-900/60 flex items-center justify-between">
@@ -334,7 +368,7 @@ function StatCard({
   color,
 }: {
   label: string;
-  value: number;
+  value: number | string;
   color: string;
 }) {
   const colorMap: Record<string, string> = {
@@ -471,24 +505,36 @@ function PengaturanSection() {
             <span class="font-mono text-xs text-slate-500 uppercase">
               Versi Aplikasi
             </span>
-            <span class="font-body text-sm text-white">1.0.0</span>
+            <span class="font-body text-sm text-white">2.0.0 (API)</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="font-mono text-xs text-slate-500 uppercase">
               Database
             </span>
-            <span class="font-body text-sm text-white">
-              SQLite (localStorage)
-            </span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="font-mono text-xs text-slate-500 uppercase">
-              Total Mahasiswa
-            </span>
-            <span class="font-body text-sm text-white">{countMahasiswa()}</span>
+            <span class="font-body text-sm text-white">SQLite (Server)</span>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg class="animate-spin w-8 h-8 mx-auto" viewBox="0 0 24 24" fill="none">
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      />
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+      />
+    </svg>
   );
 }

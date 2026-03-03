@@ -1,11 +1,15 @@
 // src/pages/LoginPage.tsx
 
 import { useState } from "preact/hooks";
-import { getMahasiswaByNim, createMahasiswa } from "@/db/mahasiswa";
-import { verifyAdminPassword, isAdmin } from "@/lib/auth";
+import {
+  login as loginApi,
+  register as registerApi,
+  checkAdmin,
+} from "@/lib/api";
+import { getSession, setSession, verifyAdminPassword } from "@/lib/auth";
 import { useApp } from "@/store";
 
-type Tab = "masuk" | "daftar" | "admin";
+type Tab = "masuk" | "daftar";
 
 export function LoginPage() {
   const [tab, setTab] = useState<Tab>("masuk");
@@ -60,7 +64,6 @@ export function LoginPage() {
           {tab === "daftar" && (
             <RegisterForm onSuccess={() => setTab("masuk")} />
           )}
-  
         </div>
 
         <p class="text-center font-mono text-[10px] text-slate-700 mt-6 uppercase tracking-widest">
@@ -79,7 +82,7 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: Event) {
+  async function handleSubmit(e: Event) {
     e.preventDefault();
     setError("");
     if (!nim.trim()) {
@@ -88,16 +91,15 @@ function LoginForm() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      const m = getMahasiswaByNim(nim.trim());
-      if (!m) {
-        setError("NIM tidak ditemukan. Silakan daftar terlebih dahulu.");
-        setLoading(false);
-        return;
-      }
+    try {
+      const m = await loginApi(nim.trim());
       login(m);
       addToast(`Selamat datang, ${m.nama}! 👋`, "success");
-    }, 300);
+    } catch (err: any) {
+      setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -143,7 +145,7 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
     setError("");
   }
 
-  function handleSubmit(e: Event) {
+  async function handleSubmit(e: Event) {
     e.preventDefault();
     if (!form.nim.trim() || !form.nama.trim()) {
       setError("NIM dan Nama wajib diisi");
@@ -153,31 +155,26 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
       setError("NIM minimal 3 karakter");
       return;
     }
-    if (getMahasiswaByNim(form.nim.trim())) {
-      setError("NIM sudah terdaftar.");
-      return;
-    }
 
     setLoading(true);
-    setTimeout(() => {
-      const m = createMahasiswa(
+    try {
+      const m = await registerApi(
         form.nim.trim(),
         form.nama.trim(),
         form.prodi,
         form.kelas,
       );
-      if (!m) {
-        setError("Gagal mendaftar. Coba lagi.");
-        setLoading(false);
-        return;
-      }
       login(m);
       addToast(
         `Akun berhasil dibuat! Selamat datang, ${m.nama}! 🎉`,
         "success",
       );
       onSuccess();
-    }, 300);
+    } catch (err: any) {
+      setError(err.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -233,10 +230,6 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
     </form>
   );
 }
-
-// ── Admin Form ───────────────────────────────────────────────────────────────
-
-
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 

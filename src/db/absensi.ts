@@ -1,6 +1,14 @@
 // src/db/absensi.ts
+// Menggunakan API backend instead of local sql.js
 
-import { getDb, persist, rowsToObjects } from "./database";
+import {
+  getTodayAbsensi,
+  getAbsensiHistory,
+  recordAbsensi as recordAbsensiApi,
+  getAbsensiByTanggal as getAbsensiByTanggalApi,
+  getAllAbsensi as getAllAbsensiApi,
+  getDailySummary as getDailySummaryApi,
+} from "@/lib/api";
 
 export type StatusAbsen = "hadir" | "izin";
 
@@ -28,139 +36,51 @@ export interface Shift {
 }
 
 export function getAllShifts(): Shift[] {
-  return rowsToObjects<Shift>(getDb().exec(`SELECT * FROM shift ORDER BY id`));
+  // Shifts are static, return from config
+  return [
+    { id: 1, nama_shift: "Pagi", jam_absen: "09:00" },
+    { id: 2, nama_shift: "Siang", jam_absen: "14:00" },
+    { id: 3, nama_shift: "Malam", jam_absen: "21:00" },
+  ];
 }
 
-export function recordAbsensi(
+export async function recordAbsensi(
   mahasiswaId: number,
   shiftId: number,
   status: StatusAbsen,
   waktuAbsen: string | null,
   keterangan?: string,
-): boolean {
-  const tanggal = getLocalDate();
-  try {
-    getDb().run(
-      `INSERT INTO absensi (mahasiswa_id, shift_id, tanggal, waktu_absen, status, keterangan)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [mahasiswaId, shiftId, tanggal, waktuAbsen, status, keterangan ?? null],
-    );
-    persist();
-    return true;
-  } catch {
-    return false; // likely UNIQUE conflict = already recorded
-  }
+): Promise<boolean> {
+  return recordAbsensiApi(mahasiswaId, shiftId, status, waktuAbsen, keterangan);
 }
 
-export function getTodayAbsensiByMahasiswa(
+export async function getTodayAbsensiByMahasiswa(
   mahasiswaId: number,
-): AbsensiRecord[] {
-  const tanggal = getLocalDate();
-  return rowsToObjects<AbsensiRecord>(
-    getDb().exec(
-      `SELECT a.*, s.nama_shift, s.jam_absen
-       FROM absensi a
-       JOIN shift s ON s.id = a.shift_id
-       WHERE a.mahasiswa_id = ? AND a.tanggal = ?
-       ORDER BY a.shift_id`,
-      [mahasiswaId, tanggal],
-    ),
-  );
+): Promise<AbsensiRecord[]> {
+  return getTodayAbsensi(mahasiswaId);
 }
 
-export function getAbsensiByMahasiswa(
+export async function getAbsensiByMahasiswa(
   mahasiswaId: number,
   limit = 60,
-): AbsensiRecord[] {
-  return rowsToObjects<AbsensiRecord>(
-    getDb().exec(
-      `SELECT a.*, s.nama_shift, s.jam_absen
-       FROM absensi a
-       JOIN shift s ON s.id = a.shift_id
-       WHERE a.mahasiswa_id = ?
-       ORDER BY a.tanggal DESC, a.shift_id ASC
-       LIMIT ?`,
-      [mahasiswaId, limit],
-    ),
-  );
+): Promise<AbsensiRecord[]> {
+  return getAbsensiHistory(mahasiswaId, limit);
 }
 
-export function getAbsensiByTanggal(tanggal: string): AbsensiRecord[] {
-  return rowsToObjects<AbsensiRecord>(
-    getDb().exec(
-      `SELECT a.*, m.nama, m.nim, m.prodi, m.kelas, s.nama_shift, s.jam_absen
-       FROM absensi a
-       JOIN mahasiswa m ON m.id = a.mahasiswa_id
-       JOIN shift s ON s.id = a.shift_id
-       WHERE a.tanggal = ?
-       ORDER BY m.nama, a.shift_id`,
-      [tanggal],
-    ),
-  );
+export async function getAbsensiByTanggal(
+  tanggal: string,
+): Promise<AbsensiRecord[]> {
+  return getAbsensiByTanggalApi(tanggal);
 }
 
-export function getAllAbsensi(): AbsensiRecord[] {
-  return rowsToObjects<AbsensiRecord>(
-    getDb().exec(
-      `SELECT a.*, m.nama, m.nim, m.prodi, m.kelas, s.nama_shift, s.jam_absen
-       FROM absensi a
-       JOIN mahasiswa m ON m.id = a.mahasiswa_id
-       JOIN shift s ON s.id = a.shift_id
-       ORDER BY a.tanggal DESC, m.nama, a.shift_id`,
-    ),
-  );
+export async function getAllAbsensi(): Promise<AbsensiRecord[]> {
+  return getAllAbsensiApi();
 }
 
-export interface DailySummary {
-  total_mahasiswa: number;
-  hadir: number;
-  izin: number;
-  per_shift: {
-    shift_id: number;
-    nama_shift: string;
-    jam_absen: string;
-    count: number;
-  }[];
-}
-
-export function getDailySummary(tanggal: string): DailySummary {
-  const db = getDb();
-
-  const totalRow =
-    (db.exec(`SELECT COUNT(*) FROM mahasiswa`)[0]?.values[0][0] as number) ?? 0;
-
-  const statRows = rowsToObjects<{ status: StatusAbsen; cnt: number }>(
-    db.exec(
-      `SELECT status, COUNT(*) as cnt FROM absensi WHERE tanggal = ? GROUP BY status`,
-      [tanggal],
-    ),
-  );
-
-  const perShift = rowsToObjects<{
-    shift_id: number;
-    nama_shift: string;
-    jam_absen: string;
-    count: number;
-  }>(
-    db.exec(
-      `SELECT a.shift_id, s.nama_shift, s.jam_absen, COUNT(*) as count
-       FROM absensi a JOIN shift s ON s.id = a.shift_id
-       WHERE a.tanggal = ? AND a.status = 'hadir'
-       GROUP BY a.shift_id`,
-      [tanggal],
-    ),
-  );
-
-  const summ: DailySummary = {
-    total_mahasiswa: totalRow,
-    hadir: 0,
-    izin: 0,
-    per_shift: perShift,
-  };
-  for (const r of statRows) {
-    summ[r.status] = Number(r.cnt);
-  }
-  return summ;
+export async function getDailySummary(
+  tanggal: string,
+): Promise<ReturnType<typeof getDailySummaryApi>> {
+  return getDailySummaryApi(tanggal);
 }
 
 export function getLocalDate(): string {

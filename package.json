@@ -1,23 +1,31 @@
 {
   "name": "absensi-preact",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate": "tsx scripts/migrate-to-supabase.ts",
+    "test:supabase": "tsx scripts/test-supabase.ts",
+    "check:today": "tsx scripts/check-today.ts",
+    "clear:today": "tsx scripts/clear-today.ts",
+    "debug": "tsx scripts/debug-absensi.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
     "preact": "^10.19.4"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.8.1",
     "@types/node": "^20.11.5",
     "autoprefixer": "^10.4.17",
+    "dotenv": "^17.3.1",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.12"
   }

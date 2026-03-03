@@ -1,0 +1,723 @@
+{
+  "mahasiswa": [
+    {
+      "id": 1,
+      "nim": "2024001001",
+      "nama": "Ahmad Iwan Junaidi",
+      "prodi": "Teknik Elektro",
+      "kelas": "Karyawan"
+    },
+    {
+      "id": 2,
+      "nim": "202211004",
+      "nama": "Ahmad Nur Hidayatullah",
+      "prodi": "Informatika",
+      "kelas": "Reguler"
+    },
+    {
+      "id": 3,
+      "nim": "202211005",
+      "nama": "Ahmad Syauqi Hulaimi",
+      "prodi": "Informatika",
+      "kelas": "Karyawan"
+    },
+    {
+      "id": 4,
+      "nim": "202211010",
+      "nama": "Fadhil Musyaffa",
+      "prodi": "Informatika",
+      "kelas": "Reguler"
+    },
+    {
+      "id": 5,
+      "nim": "202311005",
+      "nama": "Irma Fatimatuz Zahro",
+      "prodi": "Informatika",
+      "kelas": "Reguler"
+    },
+    {
+      "id": 6,
+      "nim": "202211017",
+      "nama": "Moh. Anif Yuliansyah",
+      "prodi": "Informatika",
+      "kelas": "Karyawan"
+    },
+    {
+      "id": 7,
+      "nim": "202311008",
+      "nama": "Muhammad Adil Imamul Haq Mubarak",
+      "prodi": "Informatika",
+      "kelas": "Reguler"
+    },
+    {
+      "id": 8,
+      "nim": "202111008",
+      "nama": "Muhammad Anam Mustaghfirin",
+      "prodi": "Informatika",
+      "kelas": "Karyawan"
+    },
+    {
+      "id": 9,
+      "nim": "202311012",
+      "nama": "Muhammad Ziyan Firdaus",
+      "prodi": "Informatika",
+      "kelas": "Karyawan"
+    },
+    {
+      "id": 10,
+      "nim": "202311015",
+      "nama": "Novelia Agatha Sutanto",
+      "prodi": "Informatika",
+      "kelas": "Reguler"
+    },
+    {
+      "id": 11,
+      "nim": "202311018",
+      "nama": "Riza Badruz Zaman",
+      "prodi": "Informatika",
+      "kelas": "Karyawan"
+    },
+    {
+      "id": 12,
+      "nim": "202312009",
+      "nama": "Rizky Agung Laksono",
+      "prodi": "Teknik Elektro",
+      "kelas": "Reguler"
+    },
+    {
+      "id": 13,
+      "nim": "202312013",
+      "nama": "Yahya Khoiri Riyatno",
+      "prodi": "Informatika",
+      "kelas": "Reguler"
+    }
+  ],
+  "shift": [
+    {
+      "id": 1,
+      "nama_shift": "Pagi",
+      "jam_absen": "09:00"
+    },
+    {
+      "id": 2,
+      "nama_shift": "Siang",
+      "jam_absen": "14:00"
+    },
+    {
+      "id": 3,
+      "nama_shift": "Malam",
+      "jam_absen": "21:00"
+    }
+  ],
+  "absensi": [
+    {
+      "id": 40,
+      "mahasiswa_id": 1,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 41,
+      "mahasiswa_id": 2,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 42,
+      "mahasiswa_id": 3,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 43,
+      "mahasiswa_id": 4,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 44,
+      "mahasiswa_id": 5,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 45,
+      "mahasiswa_id": 6,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 46,
+      "mahasiswa_id": 7,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 47,
+      "mahasiswa_id": 8,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 48,
+      "mahasiswa_id": 9,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 49,
+      "mahasiswa_id": 10,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 50,
+      "mahasiswa_id": 11,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 51,
+      "mahasiswa_id": 12,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 52,
+      "mahasiswa_id": 13,
+      "shift_id": 1,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 53,
+      "mahasiswa_id": 1,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 54,
+      "mahasiswa_id": 2,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 55,
+      "mahasiswa_id": 3,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 56,
+      "mahasiswa_id": 4,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 57,
+      "mahasiswa_id": 5,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 58,
+      "mahasiswa_id": 6,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 59,
+      "mahasiswa_id": 7,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 60,
+      "mahasiswa_id": 8,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 61,
+      "mahasiswa_id": 9,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 62,
+      "mahasiswa_id": 10,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 63,
+      "mahasiswa_id": 11,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 64,
+      "mahasiswa_id": 12,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 65,
+      "mahasiswa_id": 13,
+      "shift_id": 2,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Mengambil perlengkapan di rumah"
+    },
+    {
+      "id": 66,
+      "mahasiswa_id": 6,
+      "shift_id": 3,
+      "tanggal": "2026-02-26",
+      "waktu_absen": "06.00.18",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 67,
+      "mahasiswa_id": 1,
+      "shift_id": 3,
+      "tanggal": "2026-02-25",
+      "waktu_absen": "06.12.53",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 1,
+      "mahasiswa_id": 1,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 2,
+      "mahasiswa_id": 2,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 3,
+      "mahasiswa_id": 3,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 4,
+      "mahasiswa_id": 4,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 5,
+      "mahasiswa_id": 5,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 6,
+      "mahasiswa_id": 6,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 7,
+      "mahasiswa_id": 7,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 8,
+      "mahasiswa_id": 8,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 9,
+      "mahasiswa_id": 9,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 10,
+      "mahasiswa_id": 10,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 11,
+      "mahasiswa_id": 11,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 12,
+      "mahasiswa_id": 12,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 13,
+      "mahasiswa_id": 13,
+      "shift_id": 1,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "09:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 14,
+      "mahasiswa_id": 1,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 15,
+      "mahasiswa_id": 2,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 16,
+      "mahasiswa_id": 3,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 17,
+      "mahasiswa_id": 4,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 18,
+      "mahasiswa_id": 5,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 19,
+      "mahasiswa_id": 6,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 20,
+      "mahasiswa_id": 7,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 21,
+      "mahasiswa_id": 8,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 22,
+      "mahasiswa_id": 9,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 23,
+      "mahasiswa_id": 10,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 24,
+      "mahasiswa_id": 11,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 25,
+      "mahasiswa_id": 12,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 26,
+      "mahasiswa_id": 13,
+      "shift_id": 2,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "14:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 27,
+      "mahasiswa_id": 1,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 28,
+      "mahasiswa_id": 2,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 29,
+      "mahasiswa_id": 3,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 30,
+      "mahasiswa_id": 4,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 31,
+      "mahasiswa_id": 5,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 32,
+      "mahasiswa_id": 6,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 33,
+      "mahasiswa_id": 7,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 34,
+      "mahasiswa_id": 8,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 35,
+      "mahasiswa_id": 9,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 36,
+      "mahasiswa_id": 10,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 37,
+      "mahasiswa_id": 11,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "izin",
+      "keterangan": "Bekerja"
+    },
+    {
+      "id": 38,
+      "mahasiswa_id": 12,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    },
+    {
+      "id": 39,
+      "mahasiswa_id": 13,
+      "shift_id": 3,
+      "tanggal": "2026-02-24",
+      "waktu_absen": "21:00:00",
+      "status": "hadir",
+      "keterangan": null
+    }
+  ],
+  "settings": {
+    "admin_password": "admin@2024",
+    "admin_list": [
+      "202211017"
+    ]
+  }
+}

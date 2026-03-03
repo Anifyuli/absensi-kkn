@@ -3,3 +3,12 @@ dist/
 .env
 .netlify/
 *.local
+
+# Backup files
+data/absensi-backup*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

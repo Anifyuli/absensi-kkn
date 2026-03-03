@@ -1,6 +1,6 @@
 // src/pages/DashboardPage.tsx
 
-import { useState, useCallback } from "preact/hooks";
+import { useState, useCallback, useEffect } from "preact/hooks";
 import { Clock, useLiveClock } from "@/components/Clock";
 import { ShiftCard, StatusBadge } from "@/components/ShiftCard";
 import {
@@ -19,7 +19,7 @@ import {
   type StatusAbsen,
 } from "@/db/absensi";
 import { useApp } from "@/store";
-import { isAdmin } from "@/lib/auth";
+import { isAdmin, refreshAdminList } from "@/lib/auth";
 import { AdminPage } from "./AdminPage";
 
 type Tab = "absensi" | "riwayat" | "admin";
@@ -27,7 +27,17 @@ type Tab = "absensi" | "riwayat" | "admin";
 export function DashboardPage() {
   const { user, logout, addToast } = useApp();
   const [tab, setTab] = useState<Tab>("absensi");
-  const admin = isAdmin(user);
+  const [admin, setAdmin] = useState(false);
+  const [tick, setTick] = useState(0); // force refresh
+
+  // Check admin status on mount
+  useEffect(() => {
+    if (user) {
+      refreshAdminList().then(() => {
+        setAdmin(isAdmin(user));
+      });
+    }
+  }, [user]);
 
   return (
     <div class="min-h-screen bg-ink-950">
@@ -86,7 +96,9 @@ export function DashboardPage() {
         </div>
 
         {/* ── Tab Content ── */}
-        {tab === "absensi" && <AbsensiTab />}
+        {tab === "absensi" && (
+          <AbsensiTab key={tick} onRefresh={() => setTick((t) => t + 1)} />
+        )}
         {tab === "riwayat" && <RiwayatTab />}
         {tab === "admin" && admin && <AdminPage />}
       </div>
@@ -96,13 +108,22 @@ export function DashboardPage() {
 
 // ── Absensi Tab ──────────────────────────────────────────────────────────────
 
-function AbsensiTab() {
+function AbsensiTab({ onRefresh }: { onRefresh: () => void }) {
   const { user, addToast } = useApp();
   const now = useLiveClock();
-  const [tick, setTick] = useState(0); // force re-fetch
-  const refresh = useCallback(() => setTick((t) => t + 1), []);
+  const [todayRecords, setTodayRecords] = useState<AbsensiRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const todayRecords = getTodayAbsensiByMahasiswa(user!.id);
+  // Fetch today's absensi
+  useEffect(() => {
+    if (user) {
+      getTodayAbsensiByMahasiswa(user.id)
+        .then(setTodayRecords)
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [user, now.getMinutes()]); // Refresh every minute
+
   const activeShift = getActiveShift(now);
   const nextShift = getNextShift(now);
 
@@ -113,7 +134,7 @@ function AbsensiTab() {
   const [izinMode, setIzinMode] = useState(false);
   const [keterangan, setKeterangan] = useState("");
 
-  function handleCheckin(status: StatusAbsen = "hadir") {
+  async function handleCheckin(status: StatusAbsen = "hadir") {
     if (!activeShift || !user) return;
     const timeStr = now.toLocaleTimeString("id-ID", {
       hour: "2-digit",
@@ -121,7 +142,7 @@ function AbsensiTab() {
       second: "2-digit",
     });
     const finalKeterangan = status === "izin" ? keterangan.trim() : undefined;
-    const ok = recordAbsensi(
+    const ok = await recordAbsensi(
       user.id,
       activeShift.config.id,
       status,
@@ -133,12 +154,24 @@ function AbsensiTab() {
         `✓ Absensi ${activeShift.config.nama} berhasil dicatat sebagai ${status}!`,
         "success",
       );
-      refresh();
+      onRefresh();
       setIzinMode(false);
       setKeterangan("");
+      // Refresh records
+      getTodayAbsensiByMahasiswa(user.id).then(setTodayRecords);
+      // Trigger refresh for Riwayat tab
+      window.dispatchEvent(new CustomEvent("refresh-riwayat"));
     } else {
       addToast("Absensi sudah pernah dicatat untuk shift ini.", "warning");
     }
+  }
+
+  if (loading) {
+    return (
+      <div class="card p-12 text-center">
+        <Spinner />
+      </div>
+    );
   }
 
   return (
@@ -337,7 +370,25 @@ function TodaySummary({ records }: { records: AbsensiRecord[] }) {
 
 function RiwayatTab() {
   const { user } = useApp();
-  const records = getAbsensiByMahasiswa(user!.id, 90);
+  const [records, setRecords] = useState<AbsensiRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      getAbsensiByMahasiswa(user.id, 90)
+        .then(setRecords)
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [user, refreshTrigger]);
+
+  // Expose refresh function via custom event
+  useEffect(() => {
+    const handleRefresh = () => setRefreshTrigger((t) => t + 1);
+    window.addEventListener("refresh-riwayat", handleRefresh);
+    return () => window.removeEventListener("refresh-riwayat", handleRefresh);
+  }, []);
 
   // Group by date
   const grouped = records.reduce<Record<string, AbsensiRecord[]>>((acc, r) => {
@@ -362,7 +413,11 @@ function RiwayatTab() {
         </div>
       </div>
 
-      {dates.length === 0 ? (
+      {loading ? (
+        <div class="card p-12 text-center">
+          <Spinner />
+        </div>
+      ) : dates.length === 0 ? (
         <EmptyState icon="📋" message="Belum ada riwayat absensi." />
       ) : (
         dates.map((date) => (
@@ -427,5 +482,25 @@ function EmptyState({ icon, message }: { icon: string; message: string }) {
         {message}
       </div>
     </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg class="animate-spin w-8 h-8 mx-auto" viewBox="0 0 24 24" fill="none">
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      />
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+      />
+    </svg>
   );
 }

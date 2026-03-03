@@ -38,18 +38,32 @@
       transition-colors duration-150;
     }
 
+    /* Datepicker specific styling */
+    input[type="date"].input-base {
+        padding-right: 40px;
+    }
+
     /* Datepicker calendar icon visibility */
     input[type="date"] {
         color-scheme: dark;
+        position: relative;
     }
 
     input[type="date"]::-webkit-calendar-picker-indicator {
         position: absolute;
-        right: 0;
-        width: 40px;
-        height: 100%;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
         cursor: pointer;
-        opacity: 0;
+        opacity: 0.8;
+        filter: brightness(2);
+        transition: opacity 0.15s;
+    }
+
+    input[type="date"]:hover::-webkit-calendar-picker-indicator {
+        opacity: 1;
     }
 
     .btn-primary {

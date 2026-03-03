@@ -1,54 +1,50 @@
 // src/db/mahasiswa.ts
+// Menggunakan API backend instead of local sql.js
 
-import { getDb, persist, rowsToObjects } from './database'
+import { getAllMahasiswa as getAllMahasiswaApi, register } from "@/lib/api";
 
 export interface Mahasiswa {
-  id: number
-  nim: string
-  nama: string
-  prodi: string
-  kelas: string
+  id: number;
+  nim: string;
+  nama: string;
+  prodi: string;
+  kelas: string;
 }
 
-export function createMahasiswa(
+export async function createMahasiswa(
   nim: string,
   nama: string,
   prodi: string,
-  kelas: string
-): Mahasiswa | null {
+  kelas: string,
+): Promise<Mahasiswa | null> {
   try {
-    getDb().run(
-      `INSERT INTO mahasiswa (nim, nama, prodi, kelas) VALUES (?, ?, ?, ?)`,
-      [nim, nama, prodi, kelas]
-    )
-    persist()
-    return getMahasiswaByNim(nim)
+    return await register(nim, nama, prodi, kelas);
   } catch {
-    return null
+    return null;
   }
 }
 
-export function getMahasiswaByNim(nim: string): Mahasiswa | null {
-  const rows = rowsToObjects<Mahasiswa>(
-    getDb().exec(`SELECT * FROM mahasiswa WHERE nim = ? LIMIT 1`, [nim])
-  )
-  return rows[0] ?? null
+export async function getMahasiswaByNim(
+  nim: string,
+): Promise<Mahasiswa | null> {
+  // Need to fetch all and find (or add API endpoint)
+  // For now, we'll use login endpoint indirectly
+  // This is used in LoginPage, we'll handle it there
+  throw new Error("Use login API directly instead");
 }
 
-export function getMahasiswaById(id: number): Mahasiswa | null {
-  const rows = rowsToObjects<Mahasiswa>(
-    getDb().exec(`SELECT * FROM mahasiswa WHERE id = ? LIMIT 1`, [id])
-  )
-  return rows[0] ?? null
+export async function getMahasiswaById(id: number): Promise<Mahasiswa | null> {
+  // Get all mahasiswa and find by ID
+  // This is not efficient but avoids adding another API endpoint
+  const all = await getAllMahasiswa();
+  return all.find((m) => m.id === id) || null;
 }
 
-export function getAllMahasiswa(): Mahasiswa[] {
-  return rowsToObjects<Mahasiswa>(
-    getDb().exec(`SELECT * FROM mahasiswa ORDER BY nama`)
-  )
+export async function getAllMahasiswa(): Promise<Mahasiswa[]> {
+  return getAllMahasiswaApi();
 }
 
-export function countMahasiswa(): number {
-  const res = getDb().exec(`SELECT COUNT(*) as c FROM mahasiswa`)
-  return (res[0]?.values[0][0] as number) ?? 0
+export async function countMahasiswa(): Promise<number> {
+  const all = await getAllMahasiswa();
+  return all.length;
 }
