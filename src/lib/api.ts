@@ -1,7 +1,7 @@
 // src/lib/api.ts
 // API client using Supabase
 
-import { supabase } from './supabase';
+import { supabase } from "./supabase";
 
 // Types
 export interface Mahasiswa {
@@ -18,7 +18,7 @@ export interface AbsensiRecord {
   shift_id: number;
   tanggal: string;
   waktu_absen: string | null;
-  status: 'hadir' | 'izin';
+  status: "hadir" | "izin";
   keterangan: string | null;
   nama?: string;
   nim?: string;
@@ -50,13 +50,13 @@ export interface DailySummary {
 
 export async function login(nim: string): Promise<Mahasiswa> {
   const { data, error } = await supabase
-    .from('mahasiswa')
-    .select('*')
-    .eq('nim', nim)
+    .from("mahasiswa")
+    .select("*")
+    .eq("nim", nim)
     .single();
 
   if (error || !data) {
-    throw new Error('NIM not found');
+    throw new Error("NIM not found");
   }
 
   return data;
@@ -70,23 +70,23 @@ export async function register(
 ): Promise<Mahasiswa> {
   // Check if already exists
   const { data: existing } = await supabase
-    .from('mahasiswa')
-    .select('id')
-    .eq('nim', nim)
+    .from("mahasiswa")
+    .select("id")
+    .eq("nim", nim)
     .single();
 
   if (existing) {
-    throw new Error('NIM already registered');
+    throw new Error("NIM already registered");
   }
 
   const { data, error } = await supabase
-    .from('mahasiswa')
+    .from("mahasiswa")
     .insert({ nim, nama, prodi, kelas })
     .select()
     .single();
 
   if (error || !data) {
-    throw new Error('Failed to register');
+    throw new Error("Failed to register");
   }
 
   return data;
@@ -94,9 +94,9 @@ export async function register(
 
 export async function checkAdmin(nim: string): Promise<boolean> {
   const { data } = await supabase
-    .from('settings')
-    .select('key_value')
-    .eq('key_name', 'admin_list')
+    .from("settings")
+    .select("key_value")
+    .eq("key_name", "admin_list")
     .single();
 
   if (!data) return false;
@@ -113,24 +113,25 @@ export async function checkAdmin(nim: string): Promise<boolean> {
 
 export async function getTodayAbsensi(
   mahasiswaId: number,
+  tanggal: string,
 ): Promise<AbsensiRecord[]> {
-  const today = new Date().toISOString().slice(0, 10);
-
   const { data, error } = await supabase
-    .from('absensi')
-    .select(`
+    .from("absensi")
+    .select(
+      `
       *,
       shift:shift_id (
         nama_shift,
         jam_absen
       )
-    `)
-    .eq('mahasiswa_id', mahasiswaId)
-    .eq('tanggal', today)
-    .order('shift_id');
+    `,
+    )
+    .eq("mahasiswa_id", mahasiswaId)
+    .eq("tanggal", tanggal)
+    .order("shift_id");
 
   if (error) {
-    console.error('Error fetching today absensi:', error);
+    console.error("Error fetching today absensi:", error);
     return [];
   }
 
@@ -146,20 +147,22 @@ export async function getAbsensiHistory(
   limit = 60,
 ): Promise<AbsensiRecord[]> {
   const { data, error } = await supabase
-    .from('absensi')
-    .select(`
+    .from("absensi")
+    .select(
+      `
       *,
       shift:shift_id (
         nama_shift,
         jam_absen
       )
-    `)
-    .eq('mahasiswa_id', mahasiswaId)
-    .order('tanggal', { ascending: false })
+    `,
+    )
+    .eq("mahasiswa_id", mahasiswaId)
+    .order("tanggal", { ascending: false })
     .limit(limit);
 
   if (error) {
-    console.error('Error fetching absensi history:', error);
+    console.error("Error fetching absensi history:", error);
     return [];
   }
 
@@ -173,23 +176,23 @@ export async function getAbsensiHistory(
 export async function recordAbsensi(
   mahasiswa_id: number,
   shift_id: number,
-  status: 'hadir' | 'izin',
+  status: "hadir" | "izin",
+  tanggal: string,
   waktu_absen: string | null,
   keterangan?: string,
 ): Promise<boolean> {
   // Get local date from client
   const now = new Date();
-  const tanggal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   // Format waktu_absen as HH:MM:SS for PostgreSQL TIME type
   let formattedWaktuAbsen: string | null = null;
   if (waktu_absen) {
     // Handle both "HH:mm:ss" and "HH.mm.ss" formats
-    formattedWaktuAbsen = waktu_absen.replace(/\./g, ':');
+    formattedWaktuAbsen = waktu_absen.replace(/\./g, ":");
   }
 
   try {
-    const { error } = await supabase.from('absensi').insert({
+    const { error } = await supabase.from("absensi").insert({
       mahasiswa_id,
       shift_id,
       status,
@@ -199,7 +202,7 @@ export async function recordAbsensi(
     });
 
     if (error) {
-      console.error('Error recording absensi:', error);
+      console.error("Error recording absensi:", error);
       return false;
     }
 
@@ -215,8 +218,9 @@ export async function getAbsensiByTanggal(
   tanggal: string,
 ): Promise<AbsensiRecord[]> {
   const { data, error } = await supabase
-    .from('absensi')
-    .select(`
+    .from("absensi")
+    .select(
+      `
       *,
       mahasiswa:mahasiswa_id (
         nama,
@@ -228,13 +232,14 @@ export async function getAbsensiByTanggal(
         nama_shift,
         jam_absen
       )
-    `)
-    .eq('tanggal', tanggal)
-    .order('tanggal', { ascending: false })
-    .order('shift_id');
+    `,
+    )
+    .eq("tanggal", tanggal)
+    .order("tanggal", { ascending: false })
+    .order("shift_id");
 
   if (error) {
-    console.error('Error fetching absensi by tanggal:', error);
+    console.error("Error fetching absensi by tanggal:", error);
     return [];
   }
 
@@ -251,8 +256,9 @@ export async function getAbsensiByTanggal(
 
 export async function getAllAbsensi(): Promise<AbsensiRecord[]> {
   const { data, error } = await supabase
-    .from('absensi')
-    .select(`
+    .from("absensi")
+    .select(
+      `
       *,
       mahasiswa:mahasiswa_id (
         nama,
@@ -264,12 +270,13 @@ export async function getAllAbsensi(): Promise<AbsensiRecord[]> {
         nama_shift,
         jam_absen
       )
-    `)
-    .order('tanggal', { ascending: false })
-    .order('shift_id');
+    `,
+    )
+    .order("tanggal", { ascending: false })
+    .order("shift_id");
 
   if (error) {
-    console.error('Error fetching all absensi:', error);
+    console.error("Error fetching all absensi:", error);
     return [];
   }
 
@@ -287,25 +294,25 @@ export async function getAllAbsensi(): Promise<AbsensiRecord[]> {
 export async function getDailySummary(tanggal: string): Promise<DailySummary> {
   // Get total mahasiswa
   const { count: totalMahasiswa } = await supabase
-    .from('mahasiswa')
-    .select('*', { count: 'exact', head: true });
+    .from("mahasiswa")
+    .select("*", { count: "exact", head: true });
 
   // Get absensi for the date
   const { data: absensiHariIni } = await supabase
-    .from('absensi')
-    .select('status, shift_id')
-    .eq('tanggal', tanggal);
+    .from("absensi")
+    .select("status, shift_id")
+    .eq("tanggal", tanggal);
 
-  const hadir = absensiHariIni?.filter((a) => a.status === 'hadir').length || 0;
-  const izin = absensiHariIni?.filter((a) => a.status === 'izin').length || 0;
+  const hadir = absensiHariIni?.filter((a) => a.status === "hadir").length || 0;
+  const izin = absensiHariIni?.filter((a) => a.status === "izin").length || 0;
 
   // Get all shifts
-  const { data: shifts } = await supabase.from('shift').select('*');
+  const { data: shifts } = await supabase.from("shift").select("*");
 
   const perShift = (shifts || []).map((shift) => {
     const count =
       absensiHariIni?.filter(
-        (a) => a.shift_id === shift.id && a.status === 'hadir',
+        (a) => a.shift_id === shift.id && a.status === "hadir",
       ).length || 0;
     return {
       shift_id: shift.id,
@@ -325,12 +332,12 @@ export async function getDailySummary(tanggal: string): Promise<DailySummary> {
 
 export async function getAllMahasiswa(): Promise<Mahasiswa[]> {
   const { data, error } = await supabase
-    .from('mahasiswa')
-    .select('*')
-    .order('nama');
+    .from("mahasiswa")
+    .select("*")
+    .order("nama");
 
   if (error) {
-    console.error('Error fetching mahasiswa:', error);
+    console.error("Error fetching mahasiswa:", error);
     return [];
   }
 
@@ -344,14 +351,14 @@ export async function checkHealth(): Promise<{
   timestamp: string;
 }> {
   // Check Supabase connection by querying a simple table
-  const { error } = await supabase.from('shift').select('id').limit(1);
+  const { error } = await supabase.from("shift").select("id").limit(1);
 
   if (error) {
-    throw new Error('Supabase connection failed');
+    throw new Error("Supabase connection failed");
   }
 
   return {
-    status: 'ok',
+    status: "ok",
     timestamp: new Date().toISOString(),
   };
 }

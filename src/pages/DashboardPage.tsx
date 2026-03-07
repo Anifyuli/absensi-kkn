@@ -114,17 +114,21 @@ function AbsensiTab({ onRefresh }: { onRefresh: () => void }) {
   const [todayRecords, setTodayRecords] = useState<AbsensiRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const activeShift = getActiveShift(now);
+
   // Fetch today's absensi
   useEffect(() => {
-    if (user) {
-      getTodayAbsensiByMahasiswa(user.id)
-        .then(setTodayRecords)
-        .catch(console.error)
-        .finally(() => setLoading(false));
-    }
-  }, [user, now.getMinutes()]); // Refresh every minute
+    if (!user) return;
+    const userId = user.id;
+    const d = activeShift?.tanggalSesi ?? new Date();
+    const tanggal = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-  const activeShift = getActiveShift(now);
+    getTodayAbsensiByMahasiswa(userId, tanggal)
+      .then(setTodayRecords)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [user, activeShift?.tanggalSesi]);
+
   const nextShift = getNextShift(now);
 
   const todayRecordMap = new Map(todayRecords.map((r) => [r.shift_id, r]));
@@ -136,6 +140,10 @@ function AbsensiTab({ onRefresh }: { onRefresh: () => void }) {
 
   async function handleCheckin(status: StatusAbsen = "hadir") {
     if (!activeShift || !user) return;
+
+    const d = activeShift.tanggalSesi;
+    const tanggal = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
     const timeStr = now.toLocaleTimeString("id-ID", {
       hour: "2-digit",
       minute: "2-digit",
@@ -147,6 +155,7 @@ function AbsensiTab({ onRefresh }: { onRefresh: () => void }) {
       activeShift.config.id,
       status,
       timeStr,
+      tanggal,
       finalKeterangan,
     );
     if (ok) {
@@ -158,7 +167,7 @@ function AbsensiTab({ onRefresh }: { onRefresh: () => void }) {
       setIzinMode(false);
       setKeterangan("");
       // Refresh records
-      getTodayAbsensiByMahasiswa(user.id).then(setTodayRecords);
+      getTodayAbsensiByMahasiswa(user.id, tanggal).then(setTodayRecords);
       // Trigger refresh for Riwayat tab
       window.dispatchEvent(new CustomEvent("refresh-riwayat"));
     } else {
@@ -205,7 +214,12 @@ function AbsensiTab({ onRefresh }: { onRefresh: () => void }) {
       )}
 
       {/* Today's summary */}
-      {todayRecords.length > 0 && <TodaySummary records={todayRecords} />}
+      {todayRecords.length > 0 && (
+        <TodaySummary
+          records={todayRecords}
+          tanggal={activeShift?.tanggalSesi ?? new Date()}
+        />
+      )}
     </div>
   );
 }
@@ -336,10 +350,23 @@ function NextShiftPanel({ next }: { next: ReturnType<typeof getNextShift> }) {
   );
 }
 
-function TodaySummary({ records }: { records: AbsensiRecord[] }) {
+function TodaySummary({
+  records,
+  tanggal,
+}: {
+  records: AbsensiRecord[];
+  tanggal: Date;
+}) {
+  const label = tanggal.toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div class="card p-4">
-      <div class="label mb-3">Rekap Hari Ini — {getLocalDate()}</div>
+      <div class="label mb-3">Rekap Hari Ini — {label}</div>
       <div class="space-y-2">
         {records.map((r) => {
           const shiftCfg = SHIFT_CONFIGS.find((s) => s.id === r.shift_id);

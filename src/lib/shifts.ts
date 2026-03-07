@@ -6,13 +6,13 @@ export interface ShiftConfig {
   id: 1 | 2 | 3;
   nama: string;
   icon: string;
-  jam: string; // "09:00"
+  jam: string;
   hour: number;
   minute: number;
-  color: string; // tailwind class fragment
+  color: string;
   windowMinutes: number;
   startHour: number;
-  endHour: number;
+  endHour: number; // untuk sesi malam: 9 (artinya wrap ke 08:59 hari berikutnya)
 }
 
 export const SHIFT_CONFIGS: ShiftConfig[] = [
@@ -50,31 +50,50 @@ export const SHIFT_CONFIGS: ShiftConfig[] = [
     color: "sky",
     windowMinutes: 780,
     startHour: 21,
-    endHour: 24,
+    endHour: 9, // wrap: berakhir pukul 08:59 hari berikutnya
   },
 ];
 
 export interface ActiveShift {
   config: ShiftConfig;
-  status: StatusAbsen; // 'hadir' or 'izin'
-  menitSelisih: number; // positive = late, negative = early
+  status: StatusAbsen;
+  menitSelisih: number;
+  tanggalSesi: Date; // tanggal logis sesi (bukan selalu tanggal sekarang)
 }
 
 export function getActiveShift(now: Date): ActiveShift | null {
   const currentHour = now.getHours();
 
-  // Check which shift is currently active based on time ranges
   for (const cfg of SHIFT_CONFIGS) {
+    let isActive = false;
+
     if (cfg.id === 3) {
-      // Night shift: 21:00 - 08:59 (wraps to next day)
-      if (currentHour >= cfg.startHour || currentHour < 9) {
-        return { config: cfg, status: "hadir", menitSelisih: 0 };
+      // Sesi malam melewati tengah malam: aktif 21:00 – 08:59
+      isActive = currentHour >= cfg.startHour || currentHour < cfg.endHour;
+    } else {
+      // Sesi pagi & siang: range normal dalam satu hari
+      isActive = currentHour >= cfg.startHour && currentHour < cfg.endHour;
+    }
+
+    if (isActive) {
+      // Tentukan tanggal logis sesi:
+      // Jika sesi malam dan jam masih dini hari (00:00–08:59),
+      // tanggal sesi dianggap hari sebelumnya (saat sesi malam dimulai)
+      const tanggalSesi = new Date(now);
+      if (cfg.id === 3 && currentHour < cfg.endHour) {
+        tanggalSesi.setDate(tanggalSesi.getDate() - 1);
       }
-    } else if (currentHour >= cfg.startHour && currentHour < cfg.endHour) {
-      // Day shifts: use their time ranges
-      return { config: cfg, status: "hadir", menitSelisih: 0 };
+      tanggalSesi.setHours(0, 0, 0, 0);
+
+      return {
+        config: cfg,
+        status: "hadir",
+        menitSelisih: 0,
+        tanggalSesi,
+      };
     }
   }
+
   return null;
 }
 

@@ -49,15 +49,17 @@ export async function recordAbsensi(
   shiftId: number,
   status: StatusAbsen,
   waktuAbsen: string | null,
+  tanggal: string,
   keterangan?: string,
 ): Promise<boolean> {
-  return recordAbsensiApi(mahasiswaId, shiftId, status, waktuAbsen, keterangan);
+  return recordAbsensiApi(mahasiswaId, shiftId, status, tanggal, waktuAbsen, keterangan);
 }
 
 export async function getTodayAbsensiByMahasiswa(
   mahasiswaId: number,
+  tanggal: string,
 ): Promise<AbsensiRecord[]> {
-  return getTodayAbsensi(mahasiswaId);
+  return getTodayAbsensi(mahasiswaId, tanggal);
 }
 
 export async function getAbsensiByMahasiswa(
@@ -83,7 +85,7 @@ export async function getDailySummary(
   return getDailySummaryApi(tanggal);
 }
 
-export function getLocalDate(): string {
-  const d = new Date();
+export function getLocalDate(date?: Date): string {
+  const d = date ?? new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
